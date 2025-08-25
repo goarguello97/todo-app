@@ -1,0 +1,6 @@
+# Carpetas
+/node_modules
+/dist
+
+# Archivos
+.env
