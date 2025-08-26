@@ -1,6 +1,13 @@
-# Carpetas
+# Node.js
 /node_modules
+
+# Typescript
 /dist
 
-# Archivos
+# Archivos de entorno
 .env
+
+# Prisma
+# Cliente generado automáticamente
+/node_modules/.prisma/
+/node_modules/@prisma/client
