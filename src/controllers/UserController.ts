@@ -16,7 +16,7 @@ class UserController {
   }
 
   static async getUserByEmail(req: Request, res: Response) {
-    const { email } = req.query;
+    const { email } = req.params;
     const { error, data } = await UserService.getUserByEmail(String(email));
     if (error) return res.status(404).json(data);
     return res.status(200).json(data);
@@ -24,7 +24,7 @@ class UserController {
 
   static async updateUser(req: Request, res: Response) {
     const user = req.body;
-    const { email } = req.query;
+    const { email } = req.params;
     const { error, data } = await UserService.updateUser({
       user,
       email: String(email),
@@ -35,11 +35,19 @@ class UserController {
 
   static async updatePassword(req: Request, res: Response) {
     const passwords = req.body;
-    const { email } = req.query;
+    const { email } = req.params;
     const { error, data } = await UserService.updatePassword({
       passwords,
       email: String(email),
     });
+    if (error) return res.status(404).json(data);
+    return res.status(200).json(data);
+  }
+
+  static async deleteUser(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const { error, data } = await UserService.deleteUser(id);
     if (error) return res.status(404).json(data);
     return res.status(200).json(data);
   }

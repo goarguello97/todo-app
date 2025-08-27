@@ -83,6 +83,21 @@ class UserService {
       return { error: true, data: normalizeError(error) };
     }
   }
+
+  static async deleteUser(data: string) {
+    try {
+      const id = data;
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (!user) throw new CustomError("El usuario no existe.", 404);
+      const deletedUser = await prisma.user.delete({ where: { id } });
+      return {
+        error: false,
+        data: { message: "Usuario eliminado exitosamente." },
+      };
+    } catch (error) {
+      return { error: true, data: normalizeError(error) };
+    }
+  }
 }
 
 export default UserService;
