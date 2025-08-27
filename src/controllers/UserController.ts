@@ -14,6 +14,35 @@ class UserController {
     if (error) return res.status(404).json(data);
     return res.status(200).json(data);
   }
+
+  static async getUserByEmail(req: Request, res: Response) {
+    const { email } = req.query;
+    const { error, data } = await UserService.getUserByEmail(String(email));
+    if (error) return res.status(404).json(data);
+    return res.status(200).json(data);
+  }
+
+  static async updateUser(req: Request, res: Response) {
+    const user = req.body;
+    const { email } = req.query;
+    const { error, data } = await UserService.updateUser({
+      user,
+      email: String(email),
+    });
+    if (error) return res.status(404).json(data);
+    return res.status(200).json(data);
+  }
+
+  static async updatePassword(req: Request, res: Response) {
+    const passwords = req.body;
+    const { email } = req.query;
+    const { error, data } = await UserService.updatePassword({
+      passwords,
+      email: String(email),
+    });
+    if (error) return res.status(404).json(data);
+    return res.status(200).json(data);
+  }
 }
 
 export default UserController;

@@ -1,3 +1,4 @@
+import normalizeError from "../helpers/normalizeError";
 import prisma from "../prisma";
 
 class TaskService {
@@ -5,8 +6,8 @@ class TaskService {
     try {
       const task = await prisma.task.create({ data });
       return { error: false, data: task };
-    } catch (error: any) {
-      return { error: true, data: error };
+    } catch (error: unknown) {
+      return { error: true, data: normalizeError(error) };
     }
   }
 }
