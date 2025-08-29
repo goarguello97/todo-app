@@ -20,3 +20,5 @@ app.use("/api", router);
 app.listen(PORT, () => {
   return console.log(`Express is listening at http://localhost:${PORT}`);
 });
+
+export default app;

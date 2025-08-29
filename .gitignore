@@ -6,6 +6,8 @@
 
 # Archivos de entorno
 .env
+.env.test
+.env.production
 
 # Prisma
 # Cliente generado automáticamente
