@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import router from "./routes/index.routes";
@@ -5,6 +6,7 @@ import router from "./routes/index.routes";
 const app = express();
 const PORT = 3000;
 
+dotenv.config();
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

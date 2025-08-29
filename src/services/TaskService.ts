@@ -1,68 +1,54 @@
 import CustomError from "../helpers/CustomError";
 import checkTaskExists from "../helpers/checkTaskExists";
-import normalizeError from "../helpers/normalizeError";
+import { execute } from "../helpers/execute";
 import { CreateTask, UpdateTask } from "../interface/task.model";
 import prisma from "../prisma";
 
 class TaskService {
   static async createTask(data: CreateTask) {
-    try {
+    return execute(async () => {
       const { userId } = data;
       const user = await prisma.user.findUnique({ where: { id: userId } });
       if (!user) throw new CustomError("El usuario no existe", 404);
-      const createdTask = await prisma.task.create({ data });
-      return { error: false, data: createdTask };
-    } catch (error: unknown) {
-      return { error: true, data: normalizeError(error) };
-    }
+      return prisma.task.create({ data });
+    });
   }
 
   static async getAllTasks() {
-    try {
-      const tasks = await prisma.task.findMany();
-      return { error: false, data: tasks };
-    } catch (error) {
-      return { error: true, data: normalizeError(error) };
-    }
+    return execute(async () => {
+      return prisma.task.findMany();
+    });
   }
 
-  static async getTaskById(data: string) {
-    try {
-      const id = data;
+  static async getTaskById(id: string) {
+    return execute(async () => {
       const task = await prisma.task.findUnique({ where: { id } });
       if (!task) throw new CustomError("La tarea no existe", 404);
-      return { error: false, data: task };
-    } catch (error) {
-      return { error: true, data: normalizeError(error) };
-    }
+
+      return task;
+    });
   }
 
   static async updateTask(data: UpdateTask) {
-    try {
+    return execute(async () => {
       const { id, task } = data;
       await checkTaskExists(id);
-      const updatedTask = await prisma.task.update({
+      return prisma.task.update({
         where: { id },
         data: task,
       });
-      return { error: false, data: updatedTask };
-    } catch (error) {
-      return { error: true, data: normalizeError(error) };
-    }
+    });
   }
 
-  static async deleteTask(data: string) {
-    try {
-      const id = data;
-      await checkTaskExists(id);
-      const deletedTask = await prisma.task.delete({ where: { id } });
-      return {
-        error: false,
-        data: { message: "Tarea eliminada exitosamente." },
-      };
-    } catch (error) {
-      return { error: true, data: normalizeError(error) };
-    }
+  static async deleteTask(id: string) {
+    return execute(async () => {
+      const task = await prisma.task.findUnique({ where: { id } });
+      if (!task) throw new CustomError("La tarea no existe.", 404);
+
+      await prisma.task.delete({ where: { id } });
+
+      return { task, message: "Tarea eliminada exitosamente." };
+    });
   }
 }
 

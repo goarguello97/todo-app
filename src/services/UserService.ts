@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import CustomError from "../helpers/CustomError";
 import checkEmailExists from "../helpers/checkEmailExists";
-import checkUserExists from "../helpers/checkUserExists";
-import normalizeError from "../helpers/normalizeError";
+import { execute } from "../helpers/execute";
 import {
   CreateUser,
   UpdatePassword,
@@ -13,90 +12,129 @@ import prisma from "../prisma";
 class UserService {
   static async createUser(data: CreateUser) {
     const { password, email } = data;
-    try {
+    return execute(async () => {
       await checkEmailExists(email);
-      const salt = bcrypt.genSaltSync(10);
-      const encryptedPassword = bcrypt.hashSync(password, salt);
-      const createdUser = await prisma.user.create({
-        data: {
-          ...data,
-          password: encryptedPassword,
+      const encryptedPassword = this.hashPassword(password);
+      return prisma.user.create({
+        data: { ...data, password: encryptedPassword },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          Task: true,
         },
       });
-      return { error: false, data: createdUser };
-    } catch (error: unknown) {
-      return { error: true, data: normalizeError(error) };
-    }
+    });
   }
 
-  static async getAll() {
-    try {
-      const users = await prisma.user.findMany({ include: { Task: true } });
-      return { error: false, data: users };
-    } catch (error: unknown) {
-      return { error: true, data: normalizeError(error) };
-    }
+  static async getAll(includeTasks = true) {
+    return execute(async () => {
+      return prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          Task: includeTasks,
+        },
+      });
+    });
   }
 
-  static async getUserByEmail(data: string) {
-    try {
-      const email = data;
-      const user = await prisma.user.findUnique({ where: { email } });
+  static async getUserByEmail(email: string) {
+    return execute(async () => {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          Task: true,
+        },
+      });
+
       if (!user) throw new CustomError("El usuario no existe.", 404);
-      const { password, ...rest } = user;
-      return { error: false, data: rest };
-    } catch (error: unknown) {
-      return { error: true, data: normalizeError(error) };
-    }
+      return user;
+    });
   }
 
   static async updateUser(data: UpdateUser) {
-    try {
-      const { user, email } = data;
-      await checkUserExists(email);
-      const { password, ...rest } = await prisma.user.update({
+    return execute(async () => {
+      const { email, user } = data;
+      if (!user || Object.keys(user).length === 0) {
+        throw new CustomError(
+          "No se proporcionaron datos para actualizar.",
+          400
+        );
+      }
+
+      await checkEmailExists(email);
+
+      return prisma.user.update({
         where: { email },
         data: user,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          Task: true,
+        },
       });
-      return { error: false, data: rest };
-    } catch (error: unknown) {
-      return { error: true, data: normalizeError(error) };
-    }
+    });
   }
 
   static async updatePassword(data: UpdatePassword) {
-    try {
+    return execute(async () => {
       const { email, passwords } = data;
       const { currentPassword, newPassword } = passwords;
+
+      if (!passwords || !currentPassword || !newPassword) {
+        throw new CustomError(
+          "Se deben proporcionar la constraseña actual y la nueva contraseña.",
+          400
+        );
+      }
+
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) throw new CustomError("El usuario no existe.", 404);
+
       const isValid = bcrypt.compareSync(currentPassword, user.password);
       if (!isValid) throw new CustomError("Contraseña actual incorrecta", 401);
-      const salt = bcrypt.genSaltSync(10);
-      const encryptedPassword = bcrypt.hashSync(newPassword, salt);
-      const { password, ...rest } = await prisma.user.update({
+
+      const encryptedPassword = this.hashPassword(newPassword);
+
+      const updatedUser = await prisma.user.update({
         where: { email },
         data: { password: encryptedPassword },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          Task: true,
+        },
       });
-      return { error: false, data: rest };
-    } catch (error) {
-      return { error: true, data: normalizeError(error) };
-    }
+
+      return updatedUser;
+    });
   }
 
-  static async deleteUser(data: string) {
-    try {
-      const id = data;
+  static async deleteUser(id: string) {
+    return execute(async () => {
       const user = await prisma.user.findUnique({ where: { id } });
       if (!user) throw new CustomError("El usuario no existe.", 404);
-      const deletedUser = await prisma.user.delete({ where: { id } });
-      return {
-        error: false,
-        data: { message: "Usuario eliminado exitosamente." },
-      };
-    } catch (error) {
-      return { error: true, data: normalizeError(error) };
-    }
+
+      await prisma.user.delete({ where: { id } });
+      return { user, message: "Usuario eliminado exitosamente." };
+    });
+  }
+
+  private static hashPassword(password: string) {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(password, salt);
   }
 }
 
