@@ -20,7 +20,6 @@ class AuthService {
 
       const secret = process.env.JWT_SECRET!;
       if (!secret) throw new CustomError("JWT no definido", 404);
-
       const payload = { id: user.id, email: user.email };
       const options: SignOptions = {
         expiresIn: "1h",

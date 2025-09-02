@@ -12,7 +12,19 @@ class UserController {
   static async getAll(req: Request, res: Response) {
     const { error, data } = await UserService.getAll();
     if (error) return res.status(404).json(data);
-    return res.status(200).json(data);
+
+    const response = {
+      success: true,
+      message: "Usuarios obtenidos correctamente.",
+      error: null,
+      meta: {
+        timestamp: new Date().toISOString(),
+        total: Array.isArray(data) && data.length,
+        path: req.originalUrl,
+      },
+      data,
+    };
+    return res.status(200).json(response);
   }
 
   static async getUserByEmail(req: Request, res: Response) {

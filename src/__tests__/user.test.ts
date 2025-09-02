@@ -16,7 +16,7 @@ describe("Rutas de usuario", () => {
       data: [
         {
           name: "Gonzalo",
-          email: "arguello@test.com",
+          email: "gonzalo@test.com",
           password:
             "$2b$10$X5nmQPuhwyIom8p8sqlrk.W.UBYyUQBPHSGPbyU7tfCSV1j80v3xe",
         },
@@ -31,7 +31,7 @@ describe("Rutas de usuario", () => {
 
     // Logueamos un usuario para obtener el token
     const res = await request(app).post(`${api}/auth/login`).send({
-      email: "arguello@test.com",
+      email: "gonzalo@test.com",
       password: "Gonza-12345",
     });
 
