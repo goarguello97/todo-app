@@ -62,7 +62,7 @@ class UserService {
 
   static async updateUser(data: UpdateUser) {
     return execute(async () => {
-      const { email, user } = data;
+      const { id, user } = data;
       if (!user || Object.keys(user).length === 0) {
         throw new CustomError(
           "No se proporcionaron datos para actualizar.",
@@ -70,16 +70,21 @@ class UserService {
         );
       }
 
-      await checkEmailExists(email);
+      const userToUpdate = await prisma.user.findUnique({
+        where: { id },
+      });
+
+      if (!userToUpdate) throw new CustomError("Usuario no encontrado.", 400);
 
       return prisma.user.update({
-        where: { email },
+        where: { id },
         data: user,
         select: {
           id: true,
           name: true,
           email: true,
           createdAt: true,
+          updatedAt: true,
           Task: true,
         },
       });
@@ -88,7 +93,7 @@ class UserService {
 
   static async updatePassword(data: UpdatePassword) {
     return execute(async () => {
-      const { email, passwords } = data;
+      const { id, passwords } = data;
       const { currentPassword, newPassword } = passwords;
 
       if (!passwords || !currentPassword || !newPassword) {
@@ -98,8 +103,8 @@ class UserService {
         );
       }
 
-      const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) throw new CustomError("El usuario no existe.", 404);
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (!user) throw new CustomError("Usuario no encontrado.", 404);
 
       const isValid = bcrypt.compareSync(currentPassword, user.password);
       if (!isValid) throw new CustomError("Contraseña actual incorrecta", 401);
@@ -107,7 +112,7 @@ class UserService {
       const encryptedPassword = this.hashPassword(newPassword);
 
       const updatedUser = await prisma.user.update({
-        where: { email },
+        where: { id },
         data: { password: encryptedPassword },
         select: {
           id: true,
@@ -124,8 +129,10 @@ class UserService {
 
   static async deleteUser(id: string) {
     return execute(async () => {
+      if (!id) throw new CustomError("El parámetro 'id' es requerido.", 400);
+
       const user = await prisma.user.findUnique({ where: { id } });
-      if (!user) throw new CustomError("El usuario no existe.", 404);
+      if (!user) throw new CustomError("Usuario no encontrado.", 404);
 
       await prisma.user.delete({ where: { id } });
       return { user, message: "Usuario eliminado exitosamente." };

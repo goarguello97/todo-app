@@ -5,12 +5,12 @@ export interface CreateUser {
 }
 
 export interface UpdateUser {
-  email?: string;
+  id?: string;
   user: { name?: string; email?: string; password?: string };
 }
 
 export interface UpdatePassword {
-  email?: string;
+  id?: string;
   passwords: { currentPassword?: string; newPassword?: string };
 }
 

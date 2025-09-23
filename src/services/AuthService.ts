@@ -26,8 +26,17 @@ class AuthService {
       };
 
       const token = jwt.sign(payload, secret, options);
-
-      return { token };
+      const userResponse = await prisma.user.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          Task: true,
+        },
+      });
+      return { user: userResponse, token };
     });
   }
 }

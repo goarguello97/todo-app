@@ -10,7 +10,12 @@ export const authenticationToken = (
   const authHeader = req.headers["authorization"];
   const token = authHeader?.split(" ")[1];
 
-  if (!token) return res.sendStatus(401);
+  if (!token)
+    return res.status(401).json({
+      error: true,
+      success: null,
+      message: "Token no proporcionado.",
+    });
 
   try {
     const payload = jwt.verify(
@@ -20,6 +25,10 @@ export const authenticationToken = (
     (req as any).user = payload;
     next();
   } catch (error) {
-    return res.sendStatus(403);
+    return res.status(403).json({
+      error: true,
+      success: null,
+      message: "Token inválido o expirado.",
+    });
   }
 };
