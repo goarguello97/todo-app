@@ -6,13 +6,16 @@ class UserController {
     const user = req.body;
     const { error, data } = await UserService.createUser(user);
     if (error) {
-      const errorResponse = {};
-      console.log(data);
-      const code = "code" in data && data.code;
-      return res.status(code).json(errorResponse);
+      return res.status(data.code).json({
+        success: false,
+        message: data.message,
+        data: null,
+        errors: [data],
+        meta: { timestamp: new Date().toISOString(), path: req.originalUrl },
+      });
     }
 
-    const response = {
+    return res.status(201).json({
       success: true,
       message: "Usuario registrado correctamente.",
       data,
@@ -21,32 +24,29 @@ class UserController {
         timestamp: new Date().toISOString(),
         path: req.originalUrl,
       },
-    };
-    return res.status(201).json(response);
+    });
   }
 
   static async getAll(req: Request, res: Response) {
     const { error, data } = await UserService.getAll();
     if (error) {
-      const errorResponse = {
+      return res.status(data.code).json({
         success: false,
         error: true,
         data,
-      };
-      return res.status(404).json(errorResponse);
+      });
     }
-    const response = {
+    return res.status(200).json({
       success: true,
       message: "Usuarios obtenidos correctamente.",
-      error: null,
+      data,
+      errors: null,
       meta: {
         timestamp: new Date().toISOString(),
         total: Array.isArray(data) && data.length,
         path: req.originalUrl,
       },
-      data,
-    };
-    return res.status(200).json(response);
+    });
   }
 
   static async getUserByEmail(req: Request, res: Response) {
@@ -65,26 +65,19 @@ class UserController {
       id: String(id),
     });
     if (error) {
-      const errorResponse = {
+      return res.status(data.code ?? 400).json({
         success: false,
-        message: "message" in data && data.message,
+        message: data.message,
         data: { id },
-        errors: [
-          {
-            field: "id",
-            message: "No existe un usuario con el id proporcionado.",
-          },
-        ],
+        errors: null,
         meta: {
           path: req.originalUrl,
           timestamp: new Date().toISOString(),
         },
-      };
-
-      return res.status(404).json(errorResponse);
+      });
     }
 
-    const response = {
+    return res.status(200).json({
       success: true,
       message: "Usuario actualizado correctamente.",
       data,
@@ -93,8 +86,7 @@ class UserController {
         timestamp: new Date().toISOString(),
         path: req.originalUrl,
       },
-    };
-    return res.status(200).json(response);
+    });
   }
 
   static async updatePassword(req: Request, res: Response) {
@@ -105,21 +97,27 @@ class UserController {
       id: String(id),
     });
     if (error) {
-      const errorResponse = {
+      return res.status(data.code ?? 400).json({
         success: false,
-        message: "message" in data ? data.message : "",
+        message: data.message,
         data: { id },
         errors: null,
         meta: {
           timestamp: new Date().toISOString(),
           path: req.originalUrl,
         },
-      };
-
-      const code = "code" in data ? data.code : 404;
-      return res.status(code).json(errorResponse);
+      });
     }
-    return res.status(200).json(data);
+    return res.status(200).json({
+      success: true,
+      message: "Contraseña modificada con éxito.",
+      data,
+      errors: null,
+      meta: {
+        timestamp: new Date().toISOString(),
+        path: req.originalUrl,
+      },
+    });
   }
 
   static async deleteUser(req: Request, res: Response) {
@@ -127,36 +125,28 @@ class UserController {
 
     const { error, data } = await UserService.deleteUser(id);
     if (error) {
-      const errorResponse = {
+      return res.status(data.code ?? 400).json({
         success: false,
         message: data.message,
         data: { id },
-        errors: [
-          {
-            field: "id",
-            message: "No existe un usuario con el id proporcionado.",
-          },
-        ],
+        errors: null,
         meta: {
           path: req.originalUrl,
           timestamp: new Date().toISOString(),
         },
-      };
-      const code = "code" in data ? data.code : 400;
-      return res.status(code).json(errorResponse);
+      });
     }
 
-    const response = {
+    return res.status(200).json({
       success: true,
       message: "Usuario eliminado correctamente.",
-      data: { id: "id" in data ? data.id : id },
+      data: { id },
       errors: null,
       meta: {
         timestamp: new Date().toISOString(),
         path: req.originalUrl,
       },
-    };
-    return res.status(200).json(response);
+    });
   }
 
   static async notFoundPath(req: Request, res: Response) {

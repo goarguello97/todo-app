@@ -74,7 +74,7 @@ class UserService {
         where: { id },
       });
 
-      if (!userToUpdate) throw new CustomError("Usuario no encontrado.", 400);
+      if (!userToUpdate) throw new CustomError("Usuario no encontrado.", 404);
 
       return prisma.user.update({
         where: { id },
@@ -119,6 +119,7 @@ class UserService {
           name: true,
           email: true,
           createdAt: true,
+          updatedAt: true,
           Task: true,
         },
       });

@@ -58,7 +58,7 @@ describe("Rutas de usuario", () => {
       "message",
       "Usuarios obtenidos correctamente."
     );
-    expect(res.body).toHaveProperty("error", null);
+    expect(res.body).toHaveProperty("errors", null);
     expect(res.body).toHaveProperty("meta");
 
     expect(res.body.meta).toHaveProperty("timestamp");
@@ -100,7 +100,7 @@ describe("Rutas de usuario", () => {
       "message",
       "Usuarios obtenidos correctamente."
     );
-    expect(res.body).toHaveProperty("error", null);
+    expect(res.body).toHaveProperty("errors", null);
     expect(res.body).toHaveProperty("meta");
 
     expect(res.body.meta).toHaveProperty("timestamp");
@@ -457,15 +457,7 @@ describe("Rutas de usuario", () => {
       })
     );
 
-    expect(res.body).toHaveProperty("errors");
-    expect(res.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          field: "id",
-          message: "No existe un usuario con el id proporcionado.",
-        }),
-      ])
-    );
+    expect(res.body).toHaveProperty("errors", null);
 
     expect(res.body).toHaveProperty("meta");
 
@@ -782,7 +774,50 @@ describe("Rutas de usuario", () => {
     );
   });
 
-  it("PUT /users/update-password/ deberia cambiar la contraseña exitosamente.", async () => {});
+  it("PUT /users/update-password/ deberia cambiar la contraseña exitosamente.", async () => {
+    const createdUser = await request(app).post(`${api}/users`).send({
+      name: "Gonzalo",
+      email: "gonzalo@test.com",
+      password: "Test-12345",
+    });
+
+    const data = { newPassword: "12345-Test", currentPassword: "Test-12345" };
+
+    const res = await request(app)
+      .put(`${api}/users/update-password/${createdUser.body.data.id}`)
+      .send(data)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+
+    expect(res.body).toHaveProperty("success", true);
+    expect(res.body).toHaveProperty(
+      "message",
+      "Contraseña modificada con éxito."
+    );
+
+    expect(res.body).toHaveProperty("data");
+    expect(res.body.data).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        name: "Gonzalo",
+        email: "gonzalo@test.com",
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+        Task: [],
+      })
+    );
+
+    expect(res.body).toHaveProperty("errors", null);
+
+    expect(res.body).toHaveProperty("meta");
+    expect(res.body.meta).toEqual(
+      expect.objectContaining({
+        timestamp: expect.any(String),
+        path: `/api/users/update-password/${createdUser.body.data.id}`,
+      })
+    );
+  });
 
   it("DELETE /users deberia fallar si falta el id.", async () => {
     const res = await request(app)
@@ -836,15 +871,7 @@ describe("Rutas de usuario", () => {
       })
     );
 
-    expect(res.body).toHaveProperty("errors");
-    expect(res.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          field: "id",
-          message: "No existe un usuario con el id proporcionado.",
-        }),
-      ])
-    );
+    expect(res.body).toHaveProperty("errors", null);
 
     expect(res.body).toHaveProperty("meta");
 
