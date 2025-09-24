@@ -1,0 +1,185 @@
+/users:
+  post:
+    summary: Registrar usuario
+    tags:
+      - Users
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - password
+            properties:
+              name:
+                type: string
+                example: Joe
+              email:
+                type: string
+                example: joe@test.com
+              password:
+                type: string
+                example: Joe-12345
+    responses:
+      201:
+        description: Endpoint para que el usuario pueda registrarse.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Usuario registrado correctamente.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 4c381041-f4bf-4da1-88db-11425462894d
+                    name:
+                      type: string
+                      example: Joe
+                    email:
+                      type: string
+                      example: joe@mail.com
+                    createdAt:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    updatedAt:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users
+      400:
+        description: Error de validación.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: Error de validación.
+                data:
+                  type: object
+                  example: null
+                errors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        example: email
+                      message:
+                        type: string
+                        example: El email joe@test.com ya se encuentra en uso.
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users
+  get:
+    summary: Obtener todos los usuarios
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    responses:
+      200:
+        description: Lista de usuarios
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Usuarios obtenidos correctamente.
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 4c381041-f4bf-4da1-88db-11425462894d
+                      name:
+                        type: string
+                        example: Joe
+                      email:
+                        type: string
+                        example: joe@mail.com
+                      createdAt:
+                        type: string
+                        example: 2025-09-24T10:00:00.000Z
+                      Task:
+                        type: array
+                        example: []
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    total:
+                      type: number
+                      example: 1
+                    path:
+                      type: string
+                      example: /api/users
+      401:
+        description: Unauthorized.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                data:
+                  type: []
+                  example: null
+                errors:
+                  type: []
+                  example: null
+                message:
+                  type: string
+                  example: Token no proporcionado.
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users

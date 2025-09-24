@@ -1,0 +1,124 @@
+/auth/login:
+  post:
+    summary: Iniciar sesión y obtener token JWT.
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                example: joe@test.com
+              password:
+                type: string
+                example: Joe-12345
+    responses:
+      200:
+        description: Token JWT generado.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Inicio de sesión exitoso.
+                data:
+                  type: object
+                  properties:
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 4c381041-f4bf-4da1-88db-11425462894d
+                        name:
+                          type: string
+                          example: Joe
+                        email:
+                          type: string
+                          example: joe@mail.com
+                        createdAt:
+                          type: string
+                          example: 2025-09-24T10:00:00.000Z
+                        updatedAt:
+                          type: string
+                          example: 2025-09-24T10:00:00.000Z
+                    token:
+                      type: string
+                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/auth/login
+      401:
+        description: Usuario o contraseña incorrectos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Usuario o contraseña incorrectos.
+                code:
+                  type: number
+                  example: 401
+                data:
+                  type: object
+                  example: null
+                errors:
+                  type: array
+                  example: null
+                success:
+                  type: boolean
+                  example: false
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/auth/login
+      404:
+        description: JWT no definido.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: JWT no definido.
+                data:
+                  type: object
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/auth/login

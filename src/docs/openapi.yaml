@@ -1,0 +1,14 @@
+openapi: 3.0.0
+info:
+  title: "API - ToDo app"
+  version: 1.0.0
+  description: "Documentación de API todo app"
+servers:
+  - url: /api
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths: {}

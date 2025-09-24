@@ -41,9 +41,17 @@ describe("Rutas de usuario", () => {
 
     expect(res.status).toBe(401);
 
-    expect(res.body).toHaveProperty("success", null);
+    expect(res.body).toHaveProperty("success", false);
     expect(res.body).toHaveProperty("message", "Token no proporcionado.");
-    expect(res.body).toHaveProperty("error", true);
+    expect(res.body).toHaveProperty("errors", null);
+
+    expect(res.body).toHaveProperty("meta");
+    expect(res.body.meta).toEqual(
+      expect.objectContaining({
+        timestamp: expect.any(String),
+        path: "/api/users",
+      })
+    );
   });
 
   it("GET /users deberia retornar un array de usuarios vacío.", async () => {
