@@ -25,7 +25,7 @@
                 example: Joe-12345
     responses:
       201:
-        description: Endpoint para que el usuario pueda registrarse.
+        description: El usuario se registra.
         content:
           application/json:
             schema:
@@ -73,13 +73,10 @@
               properties:
                 success:
                   type: boolean
-                  example: false
                 message:
                   type: string
-                  example: Error de validación.
                 data:
                   type: object
-                  example: null
                 errors:
                   type: array
                   items:
@@ -87,19 +84,115 @@
                     properties:
                       field:
                         type: string
-                        example: email
                       message:
                         type: string
-                        example: El email joe@test.com ya se encuentra en uso.
                 meta:
                   type: object
                   properties:
                     timestamp:
                       type: string
-                      example: 2025-09-24T10:00:00.000Z
                     path:
                       type: string
-                      example: /api/users
+            examples:
+              NullName:
+                summary: Nombre inexistente.
+                description: Es la respuesta que da el servidor al ausentarse el nombre en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: name
+                      message: El nombre es requerido.
+                    - field: name
+                      message: Mínimo 3 caracteres y maximo 30 caracteres.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
+              InvalidName:
+                summary: Nombre inválido.
+                description: Es la respuesta que da el servidor cuando el nombre no cumple los requisitos.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: name
+                      message: Mínimo 3 caracteres y maximo 30 caracteres.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
+              InUseEmail:
+                summary: Email en uso.
+                description: Es la respuesta que da el servidor al usar un email que ya esta en uso.
+                value:
+                  success: false
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: email
+                      message: El email joe@test.com ya se encuentra en uso.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
+              NullEmail:
+                summary: Email inexistente.
+                description: Es la respuesta que da el servidor al ausentarse el email en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: email
+                      message: El email es requerido.
+                    - field: email
+                      message: Ingrese un email válido.
+                    - field: email
+                      message: El email es necesario.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
+              InvalidEmail:
+                summary: Email inexistente.
+                description: Es la respuesta que da el servidor al ausentarse el email en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: email
+                      message: El email es necesario.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
+              NullPassword:
+                summary: Contraseña inexistente.
+                description: Es la respuesta que da el servidor al ausentarse la contraseña en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: password
+                      message: La contraseña es requerida.
+                    - field: password
+                      message: Mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
+              InvalidPassword:
+                summary: Contraseña inválida.
+                description: Es la respuesta que da el servidor cuando la contraseña no cumple con los requisitos.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: password
+                      message: Mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users
   get:
     summary: Obtener todos los usuarios
     tags:
@@ -183,3 +276,178 @@
                     path:
                       type: string
                       example: /api/users
+/users/{id}:
+  put:
+    summary: Modificar un usuario
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        description: ID UUID del usuario a modificar.
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - email
+            properties:
+              name:
+                type: string
+                example: Joe
+              email:
+                type: string
+                example: joe@test.com
+    responses:
+      200:
+        description: Modifica un usuario con exito.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Usuario actualizado correctamente.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 4c381041-f4bf-4da1-88db-11425462894d
+                    name:
+                      type: string
+                      example: Joe
+                    email:
+                      type: string
+                      example: joe@mail.com
+                    createdAt:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    updatedAt:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    Task:
+                      type: array
+                      example: []
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users/4c381041-f4bf-4da1-88db-11425462894d
+      400:
+        description: Error del servidor por no proporcionar id.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              RequiredId:
+                summary: El parámetro 'id' es requerido.
+                description: "Error del cliente: parámetro 'id' faltante o datos no proporcionados."
+                value:
+                  success: false
+                  message: El parámetro 'id' es requerido.
+                  data: null
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+              NoData:
+                summary: No se ingresan datos para modificar.
+                description: "Error del cliente: parámetro 'id' faltante o datos no proporcionados."
+                value:
+                  success: false
+                  message: No se proporcionaron datos para actualizar.
+                  data:
+                    id: 0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+
+      404:
+        description: La operación falla.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InexistentUser:
+                summary: El usuario no existe.
+                description: Es la respuesta que da el servidor a buscar un usuario inexistente.
+                value:
+                  success: false
+                  message: Usuario no encontrado.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f53" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+              InUseEmail:
+                summary: Email en uso.
+                description: Es la respuesta que da el servidor al usar un email que ya esta en uso.
+                value:
+                  success: false
+                  message: El email john@test.com ya se encuentra en uso.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f57" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f57

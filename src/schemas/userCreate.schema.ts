@@ -15,6 +15,7 @@ const userCreate: Schema = {
     custom: { options: checkEmailExists },
   },
   password: {
+    notEmpty: { errorMessage: "La contraseña es requerida." },
     matches: {
       errorMessage:
         "Mínimo 8 caracteres, una mayúscula, un número y un carácter especial.",

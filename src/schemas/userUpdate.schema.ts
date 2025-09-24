@@ -1,5 +1,4 @@
 import { Schema } from "express-validator";
-import checkEmailExists from "../helpers/checkEmailExists";
 
 const userUpdate: Schema = {
   name: {
@@ -12,7 +11,6 @@ const userUpdate: Schema = {
   email: {
     optional: true,
     /*isEmail: { errorMessage: "Ingrese un email válido." },*/
-    custom: { options: checkEmailExists },
   },
 };
 

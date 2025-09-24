@@ -66,8 +66,57 @@
                     path:
                       type: string
                       example: /api/auth/login
+      400:
+        description: Ausencia de campos en la petición.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                data:
+                  type: object
+                errors:
+                  type: array
+                success:
+                  type: boolean
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              NullName:
+                summary: Nombre inexistente.
+                description: Es la respuesta que da el servidor al ausentarse el nombre en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: name
+                      message: El nombre es requerido.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/auth/login
+              NullPassword:
+                summary: Contraseña inexistente.
+                description: Es la respuesta que da el servidor al ausentarse la contraseña en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: password
+                      message: La contraseña es requerida.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/auth/login
       401:
-        description: Usuario o contraseña incorrectos.
+        description: JWT, usuario o contraseña inválidas.
         content:
           application/json:
             schema:
@@ -97,28 +146,27 @@
                     path:
                       type: string
                       example: /api/auth/login
-      404:
-        description: JWT no definido.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                  example: false
-                message:
-                  type: string
-                  example: JWT no definido.
-                data:
-                  type: object
-                  example: null
-                meta:
-                  type: object
-                  properties:
-                    timestamp:
-                      type: string
-                      example: 2025-09-24T10:00:00.000Z
-                    path:
-                      type: string
-                      example: /api/auth/login
+            examples:
+              InvalidCredentials:
+                summary: Credenciales inválidas.
+                description: Respuesta del servidor cuando se introducen usuario y/o contraseña incorrecta.
+                value:
+                  success: false
+                  message: Usuario o contraseña incorrectos.
+                  code: 401
+                  data: null
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T10:00:00.000Z
+                    path: /api/auth/login
+              InvalidJWT:
+                summary: JWT no definido.
+                description: Respuesta del servidor cuando no hay un token válido.
+                value:
+                  success: false
+                  message: JWT no definido.
+                  data: null
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T10:00:00.000Z
+                    path: /api/auth/login

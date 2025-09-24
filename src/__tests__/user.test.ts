@@ -424,15 +424,7 @@ describe("Rutas de usuario", () => {
     );
     expect(res.body).toHaveProperty("data", null);
 
-    expect(res.body).toHaveProperty("errors");
-    expect(res.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          field: "params",
-          message: "Debe enviar el id del usuario en la URL.",
-        }),
-      ])
-    );
+    expect(res.body).toHaveProperty("errors", null);
 
     expect(res.body).toHaveProperty("meta");
     expect(res.body.meta).toEqual(

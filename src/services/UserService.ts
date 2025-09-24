@@ -76,6 +76,10 @@ class UserService {
 
       if (!userToUpdate) throw new CustomError("Usuario no encontrado.", 404);
 
+      if (user.email !== userToUpdate.email) {
+        await checkEmailExists(user.email);
+      }
+
       return prisma.user.update({
         where: { id },
         data: user,
