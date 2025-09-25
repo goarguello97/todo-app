@@ -25,7 +25,8 @@
                 example: Joe-12345
     responses:
       201:
-        description: El usuario se registra.
+        summary: Usuario creado.
+        description: El usuario se registra correctamente y se devuelve la información creada.
         content:
           application/json:
             schema:
@@ -65,7 +66,8 @@
                       type: string
                       example: /api/users
       400:
-        description: Error de validación.
+        summary: Error de validación.
+        description: La solicitud contiene datos inválidos o faltantes (nombre, email o contraseña).
         content:
           application/json:
             schema:
@@ -201,7 +203,8 @@
       - bearerAuth: []
     responses:
       200:
-        description: Lista de usuarios
+        summary: Usuarios obtenidos.
+        description: Se devuelve la lista completa de usuarios registrados.
         content:
           application/json:
             schema:
@@ -249,7 +252,8 @@
                       type: string
                       example: /api/users
       401:
-        description: Unauthorized.
+        summary: Acceso no autorizado.
+        description: El token JWT es inválido o no fue proporcionado.
         content:
           application/json:
             schema:
@@ -308,7 +312,8 @@
                 example: joe@test.com
     responses:
       200:
-        description: Modifica un usuario con exito.
+        summary: Usuario actualizado.
+        description: El usuario se modifica exitosamente con los datos enviados.
         content:
           application/json:
             schema:
@@ -354,7 +359,8 @@
                       type: string
                       example: /api/users/4c381041-f4bf-4da1-88db-11425462894d
       400:
-        description: Error del servidor por no proporcionar id.
+        summary: Solicitud inválida.
+        description: El parámetro 'id' está ausente o no se enviaron datos para actualizar.
         content:
           application/json:
             schema:
@@ -402,9 +408,9 @@
                   meta:
                     timestamp: 2025-09-24T17:00:00Z
                     path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
-
       404:
-        description: La operación falla.
+        summary: Usuario no encontrado.
+        description: El usuario con el ID especificado no existe en la base de datos.
         content:
           application/json:
             schema:
@@ -451,3 +457,351 @@
                   meta:
                     timestamp: 2025-09-24T17:00:00Z
                     path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f57
+      409:
+        description: La operación falla.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InUseEmail:
+                summary: Email en uso.
+                description: Es la respuesta que da el servidor al usar un email que ya esta en uso.
+                value:
+                  success: false
+                  message: El email john@test.com ya se encuentra en uso.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f57" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f57
+  delete:
+    summary: Eliminar un usuario.
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        description: ID UUID del usuario a modificar.
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        summary: Usuario eliminado.
+        description: El usuario se elimina exitosamente.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Usuario actualizado correctamente.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 4c381041-f4bf-4da1-88db-11425462894d
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users/4c381041-f4bf-4da1-88db-11425462894d
+      400:
+        summary: Solicitud inválida.
+        description: El parámetro 'id' está ausente o no es válido.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              RequiredId:
+                summary: El parámetro 'id' es requerido.
+                description: "Error del cliente: parámetro 'id' faltante o datos no proporcionados."
+                value:
+                  success: false
+                  message: El parámetro 'id' es requerido.
+                  data: null
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+      404:
+        summary: Usuario no encontrado.
+        description: El usuario con el ID especificado no existe en la base de datos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InexistentUser:
+                summary: El usuario no existe.
+                description: Es la respuesta que da el servidor a buscar un usuario inexistente.
+                value:
+                  success: false
+                  message: Usuario no encontrado.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f53" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+/users/update-password/{id}:
+  put:
+    summary: Modificar contraseña de un usuario.
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        description: ID UUID del usuario a modificar.
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - newPassword
+              - currentPassword
+            properties:
+              name:
+                newPassword: string
+                example: 12345-Test
+              email:
+                currentPassword: string
+                example: Test-12345
+    responses:
+      200:
+        summary: Contraseña actualizada.
+        description: La contraseña del usuario se actualiza exitosamente.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Contraseña modificada con éxito.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 4c381041-f4bf-4da1-88db-11425462894d
+                    name:
+                      type: string
+                      example: Joe
+                    email:
+                      type: string
+                      example: joe@mail.com
+                    createdAt:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    updatedAt:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    Task:
+                      type: array
+                      example: []
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users/update-password/4c381041-f4bf-4da1-88db-11425462894d
+      400:
+        summary: Solicitud inválida
+        description: Faltan parámetros requeridos o las contraseñas no cumplen con los requisitos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              RequiredFields:
+                summary: Faltan campos requeridos.
+                description: No se proporcionaron campos requeridos 'currenPassword' y 'newPassword'
+                value:
+                  success: false
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: newPassword
+                      message: La nueva contraseña es requerida.
+                    - field: currentPassword
+                      message: La contraseña actual es requerida.
+                    - field: newPassword
+                      message: Mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+      401:
+        summary: Acceso no autorizado.
+        description: El token JWT es inválido o no fue proporcionado.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                data:
+                  type: []
+                  example: null
+                errors:
+                  type: []
+                  example: null
+                message:
+                  type: string
+                  example: Token no proporcionado.
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/users/update-password/4c381041-f4bf-4da1-88db-11425462894d
+      404:
+        summary: Usuario no encontrado.
+        description: El usuario con el ID especificado no existe en la base de datos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InexistentUser:
+                summary: El usuario no existe.
+                description: Es la respuesta que da el servidor a buscar un usuario inexistente.
+                value:
+                  success: false
+                  message: Usuario no encontrado.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f53" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/update-password/4c381041-f4bf-4da1-88db-11425462894d

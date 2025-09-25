@@ -21,7 +21,8 @@
                 example: Joe-12345
     responses:
       200:
-        description: Token JWT generado.
+        summary: Inicio de sesión exitoso
+        description: El usuario se autentica correctamente y recibe un token JWT junto con su información.
         content:
           application/json:
             schema:
@@ -67,7 +68,8 @@
                       type: string
                       example: /api/auth/login
       400:
-        description: Ausencia de campos en la petición.
+        summary: Solicitud inválida.
+        description: La petición carece de parámetros requeridos (email o contraseña) o contienen valores vacíos.
         content:
           application/json:
             schema:
@@ -89,16 +91,16 @@
                     path:
                       type: string
             examples:
-              NullName:
-                summary: Nombre inexistente.
-                description: Es la respuesta que da el servidor al ausentarse el nombre en la petición.
+              NullEmail:
+                summary: Email inexistente.
+                description: Es la respuesta que da el servidor al ausentarse el email en la petición.
                 value:
                   success: false,
                   message: Error de validación.
                   data: null
                   errors:
-                    - field: name
-                      message: El nombre es requerido.
+                    - field: email
+                      message: El email es requerido.
                   meta:
                     timestamp: 2025-09-24T17:00:00Z
                     path: /api/auth/login
@@ -116,7 +118,8 @@
                     timestamp: 2025-09-24T17:00:00Z
                     path: /api/auth/login
       401:
-        description: JWT, usuario o contraseña inválidas.
+        summary: Credenciales inválidas.
+        description: El email, la contraseña o el token JWT proporcionados son incorrectos o inválidos.
         content:
           application/json:
             schema:
@@ -161,7 +164,7 @@
                     path: /api/auth/login
               InvalidJWT:
                 summary: JWT no definido.
-                description: Respuesta del servidor cuando no hay un token válido.
+                description: Respuesta cuando no se proporciona un token JWT válido.
                 value:
                   success: false
                   message: JWT no definido.
