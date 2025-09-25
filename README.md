@@ -28,27 +28,31 @@ Se implementa lógica de CRUD para tareas y gestión de usuarios, usando MySQL c
 
 ## Estructura del proyecto
 
-├── src  
-│ ├── __tests__
-│ ├── config
-│ ├── controllers  
-│ ├── db
-│ ├── docs
-│ ├── helpers
-│ ├── interfaces
-│ ├── middlewares
-│ ├── routes  
-│ ├── schemas  
-│ ├── services 
-│ ├── prisma.ts
-│ ├── server.ts
-│ └── app.ts (punto de entrada)  
-├── prisma (o carpeta de migraciones / esquema de BD)  
-├── jest.config.ts  
-├── tsconfig.json  
-├── package.json  
-├── nodemon.json  
-└── .gitignore
+├───prisma/
+│   ├───migrations/
+├───src/
+│   ├───config/
+│   ├───controllers/
+│   ├───db/
+│   ├───docs/
+│   ├───helpers/
+│   ├───interface/
+│   ├───middlewares/
+│   ├───routes/
+│   ├───schemas/
+│   ├───services/
+│   ├───__tests__/
+│   ├───app.ts
+│   ├───prisma.ts
+│   ├───server.ts
+│   └───swagger.ts
+├───.gitignore
+├───jest.config.ts
+├───nodemon.json
+├───package-lock.json
+├───package.json
+├───README.md
+└───tsconfig.json
 
 ## Instalación & puesta en marcha
 
