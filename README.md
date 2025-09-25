@@ -12,6 +12,7 @@ Se implementa lógica de CRUD para tareas y gestión de usuarios, usando MySQL c
 - Tipado fuerte con TypeScript.
 - Compatible con desarrollo ágil usando `nodemon` y compilación de TS.
 
+
 ## Tecnologías
 
 - **Node.js** — entorno de ejecución del backend.
@@ -28,7 +29,7 @@ Se implementa lógica de CRUD para tareas y gestión de usuarios, usando MySQL c
 ## Estructura del proyecto
 
 ├── src  
-│ ├── **tests**
+│ ├── __tests__
 │ ├── config
 │ ├── controllers  
 │ ├── db
@@ -38,7 +39,7 @@ Se implementa lógica de CRUD para tareas y gestión de usuarios, usando MySQL c
 │ ├── middlewares
 │ ├── routes  
 │ ├── schemas  
-│ ├── services
+│ ├── services 
 │ ├── prisma.ts
 │ ├── server.ts
 │ └── app.ts (punto de entrada)  
@@ -57,26 +58,22 @@ Se implementa lógica de CRUD para tareas y gestión de usuarios, usando MySQL c
 4. Compilar TypeScript:
    ```bash
    npm run build
-   ```
 5. Para desarrollo con autorecarga:
-   ```bash
+	```bash
    npm run dev
-   ```
 6. Para producción:
-   ```bash
+	```bash
    npm start
-   ```
-
 ## Endpoints (API)
 
-| Método | Ruta                             | Función                          | Descripción                                                                           |
-| ------ | -------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------- |
-| GET    | `/api/users`                     | listar todos los usuarios        | Devuelve arreglo de usuarios                                                          |
-| POST   | `/api/users`                     | crear nuevo usuario              | Recibe datos de usuario en el cuerpo                                                  |
-| POST   | `/api/auth/login`                | inicia sesión                    | El usuario se autentica correctamente y recibe un token JWT junto con su información. |
-| PUT    | `/api/users/:id`                 | actualizar usuario existente     | Actualiza con los campos enviados                                                     |
-| PUT    | `/api/users/update-password/:id` | actualizar contraseña de usuario | Actualiza con los campos enviados                                                     |
-| DELETE | `/api/users/:id`                 | borrar usuario                   | Elimina el usuario por su identificador                                               |
+| Método | Ruta         | Función                  | Descripción                        |
+|--------|-------------|-------------------------|------------------------------------|
+| GET    | `/api/users`    | listar todos los usuarios  | Devuelve arreglo de usuarios         |
+| POST   | `/api/users`    | crear nuevo usuario        | Recibe datos de usuario en el cuerpo|
+| POST   | `/api/auth/login`    | inicia sesión        |   El usuario se autentica correctamente y recibe un token JWT junto con su información.|
+| PUT    | `/api/users/:id`| actualizar usuario existente| Actualiza con los campos enviados |
+| PUT    | `/api/users/update-password/:id`| actualizar contraseña de usuario| Actualiza con los campos enviados |
+| DELETE | `/api/users/:id`| borrar usuario             | Elimina el usuario por su identificador |
 
 ## Variables de entorno necesarias
 
@@ -88,4 +85,3 @@ Se implementa lógica de CRUD para tareas y gestión de usuarios, usando MySQL c
 - Ejecutar pruebas con:
   ```bash
   npm test
-  ```
