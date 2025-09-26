@@ -167,7 +167,7 @@ xdescribe("CRUD de tareas", () => {
   });
 });
 
-xdescribe("Rutas de Task", () => {
+describe("Rutas de Task", () => {
   let token: string;
   let userId: string;
   const uniqueEmail = `Joe+crud${Date.now()}@test.com`;

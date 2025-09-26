@@ -503,7 +503,7 @@
     parameters:
       - name: id
         in: path
-        description: ID UUID del usuario a modificar.
+        description: ID UUID del usuario a eliminar.
         required: true
         schema:
           type: string
@@ -521,7 +521,7 @@
                   example: true
                 message:
                   type: string
-                  example: Usuario actualizado correctamente.
+                  example: Usuario eliminado correctamente.
                 data:
                   type: object
                   properties:

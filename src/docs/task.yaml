@@ -1,0 +1,435 @@
+/tasks:
+  get:
+    summary: Obtener todas las tareas
+    tags:
+      - Tasks
+    security:
+      - bearerAuth: []
+    responses:
+      200:
+        summary: Tareas obtenidas.
+        description: Se devuelve la lista completa de tareas.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Tareas obtenidas correctamente.
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 4c381041-f4bf-4da1-88db-11425462894d
+                      task:
+                        type: string
+                        example: "Esta es una tarea para testear."
+                      done:
+                        type: boolean
+                        example: false
+                      userId:
+                        type: string
+                        example: e9ac6280-c384-4a11-9122-d842de6c3cde
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    total:
+                      type: number
+                      example: 1
+                    path:
+                      type: string
+                      example: /api/tasks
+      401:
+        summary: Acceso no autorizado.
+        description: El token JWT es inválido o no fue proporcionado.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                data:
+                  type: []
+                  example: null
+                errors:
+                  type: []
+                  example: null
+                message:
+                  type: string
+                  example: Token no proporcionado.
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/tasks
+  post:
+    summary: Crear tareas.
+    tags:
+      - Tasks
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - task
+              - userId
+            properties:
+              task:
+                type: string
+                example: Esta es una tarea para testear.
+              userId:
+                type: string
+                example: e9ac6280-c384-4a11-9122-d842de6c3cde
+    responses:
+      201:
+        summary: Tarea creada.
+        description: El usuario crea una tarea correctamente.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Tarea creada correctamente.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 4c381041-f4bf-4da1-88db-11425462894d
+                    task:
+                      type: string
+                      example: Esta es una tarea para testear.
+                    done:
+                      type: boolean
+                      example: false
+                    userId:
+                      type: string
+                      example: dbdfa51e-3845-4c91-98b2-f894b22f8062
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/tasks
+      400:
+        summary: Error de validación.
+        description: La solicitud contiene datos inválidos o faltantes (task o userId).
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                errors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                      message:
+                        type: string
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              NullTask:
+                summary: Tarea inexistente.
+                description: Es la respuesta que da el servidor al ausentarse la tarea en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: task
+                      message: La tarea es requerida.
+                    - field: task
+                      message: Mínimo 10 caracteres y maximo 100 caracteres.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/tasks
+              NullUserId:
+                summary: ID de usuario inexistente.
+                description: Es la respuesta que da el servidor al ausentarse el ID del usuario en la petición.
+                value:
+                  success: false,
+                  message: Error de validación.
+                  data: null
+                  errors:
+                    - field: userId
+                      message: Ingrese un ID de usuario válido.
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/tasks
+      404:
+        summary: Usuario no encontrado.
+        description: El usuario con el ID especificado no existe en la base de datos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InexistentUser:
+                summary: El usuario no existe.
+                description: Es la respuesta que da el servidor a buscar un usuario inexistente.
+                value:
+                  success: false
+                  message: Usuario no encontrado.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f53" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/users/0efcc04c-0c7a-484d-bca2-64a2f5b61f53
+/tasks/{id}:
+  put:
+    summary: Modificar tarea de un usuario.
+    tags:
+      - Tasks
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        description: ID UUID de la tarea a modificar.
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              task:
+                type: string
+                example: Esta es una tarea modificada.
+              done:
+                type: boolean
+                example: true
+              userId:
+                type: string
+                example: e9ac6280-c384-4a11-9122-d842de6c3cde
+    responses:
+      200:
+        summary: Tarea actualizada.
+        description: La tarea del usuario se actualiza exitosamente.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Tarea modificada correctamente.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: d988d849-c06c-49fd-81a3-3bf54cd3e974
+                    task:
+                      type: string
+                      example: Esta es una tarea modificada.
+                    done:
+                      type: boolean
+                      example: false
+                    userId:
+                      type: string
+                      example: 68f04c87-5139-4c17-b120-28a5618c7d32
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/tasks/d988d849-c06c-49fd-81a3-3bf54cd3e974
+      404:
+        summary: Tarea no encontrado.
+        description: La tarea con el ID especificado no existe en la base de datos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InexistentTask:
+                summary: La tarea no existe.
+                description: Es la respuesta que da el servidor a buscar una tarea inexistente.
+                value:
+                  success: false
+                  message: Tarea no encontrada.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f53" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/tasks/4c381041-f4bf-4da1-88db-11425462894d
+  delete:
+    summary: Eliminar una tarea.
+    tags:
+      - Tasks
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        description: ID UUID de la tarea a eliminar.
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        summary: Tarea eliminada.
+        description: La tarea se elimina exitosamente.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Tarea eliminada correctamente.
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 4c381041-f4bf-4da1-88db-11425462894d
+                errors:
+                  type: array
+                  example: null
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: 2025-09-24T10:00:00.000Z
+                    path:
+                      type: string
+                      example: /api/tasks/4c381041-f4bf-4da1-88db-11425462894d
+      404:
+        summary: Tarea no encontrado.
+        description: La tarea con el ID especificado no existe en la base de datos.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                errors:
+                  type: array
+                meta:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    path:
+                      type: string
+            examples:
+              InexistentTask:
+                summary: La tarea no existe.
+                description: Es la respuesta que da el servidor a buscar una tarea inexistente.
+                value:
+                  success: false
+                  message: Tarea no encontrada.
+                  data: { id:"0efcc04c-0c7a-484d-bca2-64a2f5b61f53" }
+                  errors: null
+                  meta:
+                    timestamp: 2025-09-24T17:00:00Z
+                    path: /api/tasks/4c381041-f4bf-4da1-88db-11425462894d

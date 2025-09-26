@@ -45,7 +45,7 @@ class TaskController {
     const { id } = req.params;
     const { error, data } = await TaskService.getTaskById(id);
     if (error)
-      return res.status(data.code && data.code | 404).json({
+      return res.status(data.code).json({
         success: false,
         message: data.message,
         data: null,
@@ -56,6 +56,7 @@ class TaskController {
           path: req.originalUrl,
         },
       });
+
     return res.status(200).json({
       success: true,
       message: "Tarea encontrada.",
