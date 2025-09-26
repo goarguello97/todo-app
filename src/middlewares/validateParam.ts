@@ -10,7 +10,7 @@ const validateIdParam = (req: Request, res: Response, next: NextFunction) => {
       data: null,
       errors: [
         {
-          campo: "params",
+          field: "params",
           message: "Debe enviar el id del usuario en la URL.",
         },
       ],

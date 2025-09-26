@@ -4,32 +4,28 @@ import prisma from "../prisma";
 
 const api = "/api";
 
-xdescribe("Rutas auth", () => {
-  let user;
+describe("Rutas auth", () => {
+  let userEmail;
 
   beforeAll(async () => {
+    await prisma.task.deleteMany({});
     await prisma.user.deleteMany({});
-    user = await prisma.user.create({
-      data: {
-        name: "Gonzalo",
-        email: "gonzalo@test.com",
-        password:
-          "$2b$10$X5nmQPuhwyIom8p8sqlrk.W.UBYyUQBPHSGPbyU7tfCSV1j80v3xe",
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        createdAt: true,
-        Task: true,
-      },
+
+    const uniqueEmail = `Joe+crud${Date.now()}@test.com`;
+
+    const user = await request(app).post("/api/users").send({
+      name: "Joe",
+      email: uniqueEmail,
+      password: "Test-12345",
     });
+
+    userEmail = user.body.data.email;
   });
 
   it("POST /login deberia tener acceso con credenciales válidas.", async () => {
     const res = await request(app).post(`${api}/auth/login`).send({
-      email: "gonzalo@test.com",
-      password: "Gonza-12345",
+      email: userEmail,
+      password: "Test-12345",
     });
 
     expect(res.status).toBe(200);
@@ -43,8 +39,8 @@ xdescribe("Rutas auth", () => {
       expect.objectContaining({
         user: expect.objectContaining({
           id: expect.any(String),
-          name: "Gonzalo",
-          email: "gonzalo@test.com",
+          name: "Joe",
+          email: userEmail,
         }),
         token: expect.any(String),
       })
@@ -59,8 +55,8 @@ xdescribe("Rutas auth", () => {
 
   it("POST /login no deberia tener acceso con email inválido.", async () => {
     const res = await request(app).post(`${api}/auth/login`).send({
-      email: "gonzaloo@test.com",
-      password: "Gonza-12345",
+      email: "John@test.com",
+      password: "Test-12345",
     });
 
     expect(res.status).toBe(401);
@@ -82,8 +78,8 @@ xdescribe("Rutas auth", () => {
 
   it("POST /login no deberia tener acceso con contraseña inválida.", async () => {
     const res = await request(app).post(`${api}/auth/login`).send({
-      email: "gonzalo@test.com",
-      password: "Gonza-1234",
+      email: userEmail,
+      password: "Test-1234",
     });
 
     expect(res.status).toBe(401);
@@ -102,9 +98,9 @@ xdescribe("Rutas auth", () => {
     expect(res.body.meta).toHaveProperty("timestamp");
     expect(res.body.meta).toHaveProperty("path", "/api/auth/login");
   });
+});
 
-  afterAll(async () => {
-    await prisma.user.deleteMany({});
-    await prisma.$disconnect();
-  });
+afterAll(async () => {
+  await prisma.user.deleteMany({});
+  await prisma.$disconnect();
 });
