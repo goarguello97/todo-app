@@ -13,9 +13,12 @@ class TaskService {
     });
   }
 
-  static async getAllTasks() {
+  static async getAllTasks(id: string) {
     return execute(async () => {
-      return prisma.task.findMany();
+      const tasks = await prisma.task.findMany();
+      if (!tasks) throw new CustomError("No hay tareas que mostrar.", 404);
+
+      return tasks;
     });
   }
 

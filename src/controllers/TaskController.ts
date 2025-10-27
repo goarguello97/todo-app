@@ -26,7 +26,8 @@ class TaskController {
   }
 
   static async getAllTasks(req: Request, res: Response) {
-    const { error, data } = await TaskService.getAllTasks();
+    const { userId } = req.params;
+    const { error, data } = await TaskService.getAllTasks(userId);
     if (error) return res.status(data.code && data.code | 404).json(data);
     return res.status(200).json({
       success: true,
@@ -74,7 +75,7 @@ class TaskController {
     const task = req.body;
     const { error, data } = await TaskService.updateTask({ id, task });
     if (error)
-      return res.status(data.code).json({
+      return res.status(200).json({
         success: false,
         message: data.message,
         data: null,

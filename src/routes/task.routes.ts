@@ -10,8 +10,8 @@ const router = express.Router();
 const { createTask, getAllTasks, getTaskById, updateTask, deleteTask } =
   TaskController;
 
-router.get("/", authenticationToken, getAllTasks);
-router.get("/:id", authenticationToken, getTaskById);
+router.get("/:userId", authenticationToken, getAllTasks);
+//router.get("/:id", authenticationToken, getTaskById);
 router.post(
   "/",
   authenticationToken,
