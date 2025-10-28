@@ -15,7 +15,7 @@ class TaskService {
 
   static async getAllTasks(id: string) {
     return execute(async () => {
-      const tasks = await prisma.task.findMany();
+      const tasks = await prisma.task.findMany({ where: { userId: id } });
       if (!tasks) throw new CustomError("No hay tareas que mostrar.", 404);
 
       return tasks;
