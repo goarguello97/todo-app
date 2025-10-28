@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
     "test": "cross-env NODE_ENV=test prisma db push && jest --passWithNoTests --runInBand --watchAll",
-    "start": "dotenv -e .env.production -- node /dist/server.js"
+    "start": "dotenv -e .env.production -- node /dist/server.js",
+    "tsc": "tsc"
   },
   "keywords": [],
   "author": "",
